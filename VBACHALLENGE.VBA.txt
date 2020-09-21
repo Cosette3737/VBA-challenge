@@ -1,14 +1,11 @@
 Sub Ticker()
+
+'set variables
+
 Cells(1, 9).Value = "Ticker"
 Cells(1, 10).Value = "Yearly Change"
 Cells(1, 11).Value = "Percent Change"
 Cells(1, 12).Value = "Total Stock Volume"
-Cells(3, 17).Value = "Greatest % Increase"
-Cells(4, 17).Value = "Greatest % Decrease"
-Cells(5, 17).Value = "Greatest Total Volume"
-
-
-
 
 Dim Tickername As String
 Dim Tickertotal As Double
@@ -20,27 +17,33 @@ Dim closeprice As Double
 Dim close_open As Double
 
 
+'formulas,variables,lastrow
+
 
 Yearlychange = closeprice - Openprice
-percent = close_open - Openprice
 lastrow = Cells(Rows.Count, 1).End(xlUp).Row
-
 Tickertotal = 0
 Dim summary_table_row As Integer
 summary_table_row = 2
 
+'find open
 For i = 2 To lastrow
-    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+    If Cells(i - 1, 1).Value <> Cells(i, 1).Value Then
+    Openprice = Cells(i, 3).Value
+    ElseIf Openprice = 0 Then
+    percent = 0
+    
+'find close, tickername, open_close and percent
+
+    ElseIf Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
         Tickername = Cells(i, 1).Value
-        Openprice = Cells(i, 3).Value
-
-         closeprice = Cells(i, 6).Value
+        closeprice = Cells(i, 6).Value
         Tickertotal = Tickertotal + Cells(i, 7).Value
-close_open = closeprice - Openprice
-percent = close_open / closeprice
-'ElseIf Cells(i + 1, 1).Value = Cells(i, 1).Value Then
-  'Tickername = Cells(i, 1).Value
-
+        close_open = closeprice - Openprice
+        percent = close_open / closeprice
+        
+        
+'put values in table
     Range("I" & summary_table_row).Value = Tickername
     Range("L" & summary_table_row).Value = Tickertotal
     Range("J" & summary_table_row).Value = close_open
@@ -50,13 +53,17 @@ percent = close_open / closeprice
     summary_table_row = summary_table_row + 1
 
 Tickertotal = 0
+
+
+
+
 End If
 Next i
 
 
 'conditionalformating
 
-For g = 1 To 1000
+For g = 1 To 5000
 
         If Cells(g, 10) > 0 Then
 
@@ -72,24 +79,8 @@ For g = 1 To 1000
 
 
 
-'Rowk = percent
-
+'  Row K= percent
 Range("K:K").NumberFormat = "0.00%"
 
-'Cells(S2).Value = VLookup(Max(K2:K5000), I2:K5000, 1, False)
-
-
-'Combinesheets
-'Sheets.Add.Name = "Combined_Data"
-
-'Sheets("Combined_Data").Move Before:=Sheets(1)
-'Set combined_sheet = Worksheets("combined_Data")
-'For Each ws In Worksheets
-'lasttrow = combined_sheet.Cells(Rows.Count, "A").End(xlUp).Row + 1
-'lastrowstate = ws.Cells(Rows.Count, "A").End(xlUp).Row - 1
-'combined_sheet.Range("A" & lasttrow & ":P" & ((lastrowstate - 1) + lasttrow)).Value = ws.Range("A2:P" & (lastrowstate + 1)).Value
-'Next ws
-'combined_sheet.Range("A1:P1").Value = Sheets(2).Range("A1:P1").Value
-'combined_sheet.Columns("A:P").AutoFit
 
 End Sub
